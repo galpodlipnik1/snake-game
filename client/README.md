@@ -6,8 +6,4 @@ snake game for midterm project
 
 https://www.youtube.com/watch?v=ppcBIHv_ZPs (min 4:57)
 
-
-
-
-
 https://www.youtube.com/watch?v=djMy4QsPWiI

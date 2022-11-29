@@ -20,7 +20,7 @@
   "plugins": ["react"],
   "rules": {
     "react/react-in-jsx-scope": "off",
-    "prettier/prettier": ["error", {}, { "usePrettierrc": true }, { "endOfLine": "auto" }],
+    "prettier/prettier": ["error", { "usePrettierrc": true }, { "endOfLine": "auto" }],
     "react/self-closing-comp": ["error", { "component": true, "html": true }]
   },
   "settings": {
