@@ -1,14 +1,27 @@
-import { Server, Socket } from "socket.io";
+import { Server } from "socket.io";
 import { initGame, gameLoop, getUpdatedVelocity } from "./game.js";
 import { makeid } from "./util.js";
 import { FRAME_RATE } from "./constants.js";
+import https from 'https';
+import fs from 'fs';
 
-const io = new Server(3000, {
+const options = {
+  key: fs.readFileSync('key.pem'),
+  cert: fs.readFileSync('cert.pem')
+};
+
+const server = https.createServer(options, (req, res) => {
+  res.writeHead(200);
+  res.end('hello world\n');
+});
+
+const io = new Server(server, {
   cors: {
-    origin: '*',
-    methods: '*'
+    origin: "*",
+    methods: ["GET", "POST"]
   }
 });
+
 
 const state = {};
 const clientRooms = {};
@@ -118,3 +131,6 @@ const emitGameOver = (room, winner) => {
   io.sockets.in(room).emit('gameOver', JSON.stringify({ winner }));
 }
 
+server.listen(3000, () => {
+  console.log(`[${new Date().toLocaleString()}] listening on port 3000`);
+})
