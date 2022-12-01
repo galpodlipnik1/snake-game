@@ -10,6 +10,7 @@ const Game = () => {
   const FOOD_COLOR = '#e66916';
 
   window.onload = () => {
+    document.title = 'Snake Game Lobby';
     const newGameButton = document.getElementById('newGameButton');
     const joinGameButton = document.getElementById('joinGameButton');
     const gameCodeInput = document.getElementById('gameCodeInput');
@@ -170,55 +171,57 @@ const Game = () => {
   };
 
   return (
-    <section className="w-full h-[100vh]">
-      <div id="initialScreen" className={`h-full ${!gameScreenState ? '' : 'hidden'}`}>
-        <div className="flex flex-col items-center justify-center h-full">
-          <h1 className="text-4xl font-bold text-black">Snake Game</h1>
-          <button
-            type="submit"
-            className="px-4 py-2 mt-4 text-white bg-black rounded-md"
-            id="newGameButton"
-          >
-            Create New Game
-          </button>
-          <div>OR</div>
-          <div className="flex flex-col items-center justify-center mt-4">
-            <input
-              type="text"
-              placeholder="Enter Game Code"
-              id="gameCodeInput"
-              className="px-4 py-2 text-black border-black rounded-md"
-            />
-          </div>
-          <button
-            type="submit"
-            className="px-4 py-2 mt-4 text-white bg-black rounded-md"
-            id="joinGameButton"
-          >
-            Join Game
-          </button>
-        </div>
-      </div>
-
-      <div id="gameScreen" className={`h-full ${!gameScreenState ? 'hidden' : ''}`}>
-        <div className="w-full h-full flex justify-center items-center">
-          <div className="flex flex-col h-full justify-center items-center">
-            <div className="flex flex-row items-center justify-between w-full">
-              <h1 className="text-2xl font-bold text-black">
-                SCORE: <span id="gameScoreDisplay">0</span>
-              </h1>
-              <h1>
-                TIMER: <span id="gameTimerDisplay">00:00</span>
-              </h1>
-              <h1>
-                Game Code: <span id="gameCodeDisplay" />
-              </h1>
+    <>
+      <section className="w-full h-[100vh]">
+        <div id="initialScreen" className={`h-full ${!gameScreenState ? '' : 'hidden'}`}>
+          <div className="flex flex-col items-center justify-center h-full">
+            <h1 className="text-4xl font-bold text-black">Snake Game</h1>
+            <button
+              type="submit"
+              className="px-4 py-2 mt-4 text-white bg-black rounded-md"
+              id="newGameButton"
+            >
+              Create New Game
+            </button>
+            <div>OR</div>
+            <div className="flex flex-col items-center justify-center mt-4">
+              <input
+                type="text"
+                placeholder="Enter Game Code"
+                id="gameCodeInput"
+                className="px-4 py-2 text-black border-black rounded-md"
+              />
             </div>
-            <canvas id="canvas" />
+            <button
+              type="submit"
+              className="px-4 py-2 mt-4 text-white bg-black rounded-md"
+              id="joinGameButton"
+            >
+              Join Game
+            </button>
           </div>
         </div>
-      </div>
-    </section>
+
+        <div id="gameScreen" className={`h-full ${!gameScreenState ? 'hidden' : ''}`}>
+          <div className="w-full h-full flex justify-center items-center">
+            <div className="flex flex-col h-full justify-center items-center">
+              <div className="flex flex-row items-center justify-between w-full">
+                <h1 className="text-2xl font-bold text-black">
+                  SCORE: <span id="gameScoreDisplay">0</span>
+                </h1>
+                <h1>
+                  TIMER: <span id="gameTimerDisplay">00:00</span>
+                </h1>
+                <h1>
+                  Game Code: <span id="gameCodeDisplay" />
+                </h1>
+              </div>
+              <canvas id="canvas" />
+            </div>
+          </div>
+        </div>
+      </section>
+    </>
   );
 };
 
