@@ -16,6 +16,7 @@ const clientRooms = {};
 io.on('connection', client => {
 
   const handleJoinGame = (roomName) => {
+    client.emit('gameCode', roomName);
     const room = io.sockets.adapter.rooms.get(roomName);
 
     let allUsers;
@@ -45,7 +46,9 @@ io.on('connection', client => {
     client.join(roomName);
     client.number = 2;
     client.emit('init', 2);
-    
+
+    io.sockets.in(roomName).emit('gameStart');
+
     startGameInterval(roomName);
   }
 
