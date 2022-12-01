@@ -1,208 +1,185 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { io } from 'socket.io-client';
+import { useNavigate } from 'react-router-dom';
 
-const Game = () => {
-  const [gameScreenState, setGameScreenState] = useState(false);
+const Game = ({ type, gameCode }) => {
+  const navigate = useNavigate();
   const socket = io('http://localhost:3000');
 
   const BG_COLOR = '#231f20';
   const SNAKE_COLOR = '#c2c2c2';
   const FOOD_COLOR = '#e66916';
 
-  window.onload = () => {
-    document.title = 'Snake Game Lobby';
-    const newGameButton = document.getElementById('newGameButton');
-    const joinGameButton = document.getElementById('joinGameButton');
-    const gameCodeInput = document.getElementById('gameCodeInput');
-    const gameCodeDisplay = document.getElementById('gameCodeDisplay');
-    const gameScoreDisplay = document.getElementById('gameScoreDisplay');
-    const gameTimerDisplay = document.getElementById('gameTimerDisplay');
+  document.title = 'Snake Game Lobby';
+  let gameCodeDisplay;
+  let gameScoreDisplay;
+  let gameTimerDisplay;
+  let gameActive = false;
 
-    const newGame = () => {
-      socket.emit('newGame');
-      setGameScreenState(true);
-      init();
-    };
+  useEffect(() => {
+    if (type === 'join') {
+      joinGame(gameCode);
+    } else if (type === 'create') {
+      newGame();
+    }
 
-    const joinGame = () => {
-      const code = gameCodeInput.value;
-      socket.emit('joinGame', code);
-      setGameScreenState(true);
-      init();
-    };
+    gameCodeDisplay = document.getElementById('gameCodeDisplay');
+    gameScoreDisplay = document.getElementById('gameScoreDisplay');
+    gameTimerDisplay = document.getElementById('gameTimerDisplay');
+  }, []);
 
-    const handleGameStart = () => {
-      timerFnc();
-    };
+  const handleGameStart = () => {
+    timerFnc();
+  };
 
-    newGameButton.addEventListener('click', newGame);
-    joinGameButton.addEventListener('click', joinGame);
+  let canvas, ctx;
+  let playerNumber;
+  let score = 0;
+  let timer = '00:00';
 
-    let canvas, ctx;
-    let playerNumber;
-    let score = 0;
-    let gameActive = false;
-    let timer = '00:00';
+  const keydown = (e) => {
+    socket.emit('keydown', e.keyCode);
+  };
 
-    const init = () => {
-      canvas = document.getElementById('canvas');
-      ctx = canvas.getContext('2d');
+  const init = () => {
+    canvas = document.getElementById('canvas');
+    ctx = canvas.getContext('2d');
 
-      canvas.width = canvas.height = 600;
+    canvas.width = canvas.height = 600;
 
-      ctx.fillStyle = BG_COLOR;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = BG_COLOR;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      document.addEventListener('keydown', keydown);
+    document.addEventListener('keydown', keydown);
 
-      gameActive = true;
-    };
+    gameActive = true;
+  };
 
-    const keydown = (e) => {
-      socket.emit('keydown', e.keyCode);
-    };
+  const newGame = () => {
+    socket.emit('newGame');
+    init();
+  };
 
-    const paintGame = (state) => {
-      ctx.fillStyle = BG_COLOR;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+  const joinGame = (code) => {
+    socket.emit('joinGame', code);
+    init();
+  };
 
-      const food = state.food;
-      const gridsize = state.gridsize;
-      const size = canvas.width / gridsize;
+  const paintGame = (state) => {
+    ctx.fillStyle = BG_COLOR;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      ctx.fillStyle = FOOD_COLOR;
-      ctx.fillRect(food.x * size, food.y * size, size, size);
+    const food = state.food;
+    const gridsize = state.gridsize;
+    const size = canvas.width / gridsize;
 
-      paintPlayer(state.players[0], size, SNAKE_COLOR);
-      paintPlayer(state.players[1], size, 'red');
-    };
+    ctx.fillStyle = FOOD_COLOR;
+    ctx.fillRect(food.x * size, food.y * size, size, size);
 
-    const paintPlayer = (playerState, size, color) => {
-      const snake = playerState.snake;
+    paintPlayer(state.players[0], size, SNAKE_COLOR);
+    paintPlayer(state.players[1], size, 'red');
+  };
 
-      ctx.fillStyle = color;
-      for (let cell of snake) {
-        ctx.fillRect(cell.x * size, cell.y * size, size, size);
-      }
-    };
+  const paintPlayer = (playerState, size, color) => {
+    const snake = playerState.snake;
 
-    const handleGameState = (gameState) => {
-      if (!gameActive) {
-        return;
-      }
-      gameState = JSON.parse(gameState);
-      score = gameState.players[playerNumber - 1].score;
+    ctx.fillStyle = color;
+    for (let cell of snake) {
+      ctx.fillRect(cell.x * size, cell.y * size, size, size);
+    }
+  };
 
-      gameScoreDisplay.innerText = score;
+  const handleGameState = (gameState) => {
+    if (!gameActive) {
+      return;
+    }
+    gameState = JSON.parse(gameState);
+    score = gameState.players[playerNumber - 1].score;
 
-      requestAnimationFrame(() => paintGame(gameState));
-    };
+    gameScoreDisplay.innerText = score;
 
-    const handleGameOver = (data) => {
-      if (!gameActive) {
-        return;
-      }
+    requestAnimationFrame(() => paintGame(gameState));
+  };
 
-      data = JSON.parse(data);
-      if (data.winner === playerNumber) {
-        alert('You Win!');
-      } else {
-        alert('You Lose.');
-      }
+  const reset = () => {
+    playerNumber = null;
+  };
 
-      gameActive = false;
-    };
+  const handleGameOver = (data) => {
+    if (!gameActive) {
+      return;
+    }
 
-    const handleInit = (number) => {
-      playerNumber = number;
-    };
+    data = JSON.parse(data);
+    if (data.winner === playerNumber) {
+      reset();
+      alert('You Win!');
+      navigate('/lobby');
+    } else {
+      reset();
+      alert('You Lose.');
+      navigate('/lobby');
+    }
 
-    const timerFnc = () => {
-      let sec = 0;
-      let min = 0;
-      let timerId;
-      if (gameActive) {
-        if (timer.includes('99:99') == false) {
-          timerId = setInterval(() => {
-            sec++;
-            if (sec === 60) {
-              min++;
-              sec = 0;
-            }
-            timer = `${min < 10 ? '0' + min : min}:${sec < 10 ? '0' + sec : sec}`;
-            gameTimerDisplay.innerText = timer;
-          }, 1000);
-        } else {
-          clearInterval(timerId);
-          gameTimerDisplay.innerText = '99:99+';
-        }
+    gameActive = false;
+  };
+
+  const handleInit = (number) => {
+    playerNumber = number;
+  };
+
+  const timerFnc = () => {
+    let sec = 0;
+    let min = 0;
+    let timerId;
+    if (gameActive) {
+      if (timer.includes('99:99') == false) {
+        timerId = setInterval(() => {
+          sec++;
+          if (sec === 60) {
+            min++;
+            sec = 0;
+          }
+          timer = `${min < 10 ? '0' + min : min}:${sec < 10 ? '0' + sec : sec}`;
+          gameTimerDisplay.innerText = timer;
+        }, 1000);
       } else {
         clearInterval(timerId);
+        gameTimerDisplay.innerText = '99:99+';
       }
-    };
-
-    const handleGameCode = (gameCode) => {
-      gameCodeDisplay.innerText = gameCode;
-    };
-
-    const reset = () => {
-      playerNumber = null;
-      gameCodeInput.value = '';
-      gameCodeDisplay.innerText = '';
-    };
-
-    const handleUnknownGame = () => {
-      reset();
-      alert('Unknown Game Code');
-    };
-
-    const handleTooManyPlayers = () => {
-      reset();
-      alert('This game is already in progress');
-    };
-
-    socket.on('init', handleInit);
-    socket.on('gameState', handleGameState);
-    socket.on('gameOver', handleGameOver);
-    socket.on('gameCode', handleGameCode);
-    socket.on('unknownGame', handleUnknownGame);
-    socket.on('tooManyPlayers', handleTooManyPlayers);
-    socket.on('gameStart', handleGameStart);
+    } else {
+      clearInterval(timerId);
+    }
   };
+
+  const handleGameCode = (gcode) => {
+    gameCodeDisplay.innerText = gcode;
+  };
+
+  const handleUnknownGame = () => {
+    reset();
+    alert('Unknown Game Code');
+    navigate('/lobby');
+  };
+
+  const handleTooManyPlayers = () => {
+    reset();
+    alert('This game is already in progress');
+    navigate('/lobby');
+  };
+
+  socket.on('init', handleInit);
+  socket.on('gameState', handleGameState);
+  socket.on('gameOver', handleGameOver);
+  socket.on('gameCode', handleGameCode);
+  socket.on('unknownGame', handleUnknownGame);
+  socket.on('tooManyPlayers', handleTooManyPlayers);
+  socket.on('gameStart', handleGameStart);
 
   return (
     <>
       <section className="w-full h-[100vh]">
-        <div id="initialScreen" className={`h-full ${!gameScreenState ? '' : 'hidden'}`}>
-          <div className="flex flex-col items-center justify-center h-full">
-            <h1 className="text-4xl font-bold text-black">Snake Game</h1>
-            <button
-              type="submit"
-              className="px-4 py-2 mt-4 text-white bg-black rounded-md"
-              id="newGameButton"
-            >
-              Create New Game
-            </button>
-            <div>OR</div>
-            <div className="flex flex-col items-center justify-center mt-4">
-              <input
-                type="text"
-                placeholder="Enter Game Code"
-                id="gameCodeInput"
-                className="px-4 py-2 text-black border-black rounded-md"
-              />
-            </div>
-            <button
-              type="submit"
-              className="px-4 py-2 mt-4 text-white bg-black rounded-md"
-              id="joinGameButton"
-            >
-              Join Game
-            </button>
-          </div>
-        </div>
-
-        <div id="gameScreen" className={`h-full ${!gameScreenState ? 'hidden' : ''}`}>
+        <div id="gameScreen" className={`h-full`}>
           <div className="w-full h-full flex justify-center items-center">
             <div className="flex flex-col h-full justify-center items-center">
               <div className="flex flex-row items-center justify-between w-full">

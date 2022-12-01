@@ -21,7 +21,8 @@
   "rules": {
     "react/react-in-jsx-scope": "off",
     "prettier/prettier": ["error", { "usePrettierrc": true }, { "endOfLine": "auto" }],
-    "react/self-closing-comp": ["error", { "component": true, "html": true }]
+    "react/self-closing-comp": ["error", { "component": true, "html": true }],
+    "react/prop-types": ["off"]
   },
   "settings": {
     "react": {
