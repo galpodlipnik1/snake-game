@@ -1,4 +1,4 @@
-import { Server } from "socket.io";
+import { Server, Socket } from "socket.io";
 import { initGame, gameLoop, getUpdatedVelocity } from "./game.js";
 import { makeid } from "./util.js";
 import { FRAME_RATE } from "./constants.js";
@@ -16,6 +16,7 @@ const clientRooms = {};
 io.on('connection', client => {
 
   const handleJoinGame = (roomName) => {
+    console.log(`[${new Date().toLocaleString()}] joined`, client.id);
     client.emit('gameCode', roomName);
     const room = io.sockets.adapter.rooms.get(roomName);
 
@@ -23,18 +24,18 @@ io.on('connection', client => {
     if (room) {
         allUsers = room;
     } else {
-        console.log('room not found');
+        console.log(`[${new Date().toLocaleString()}] room not found`);
     }
 
     let numClients = 0;
     if (allUsers) {
         numClients = allUsers.size;
     } else {
-        console.log('no users');
+        console.log(`[${new Date().toLocaleString()}] no users`);
     }
 
     if (numClients === 0) {
-      client.emit('unknownCode');
+      client.emit('unknownGame');
       return;
     } else if (numClients > 1) {
       client.emit('tooManyPlayers');
@@ -53,6 +54,7 @@ io.on('connection', client => {
   }
 
   const handleNewGame = () => {
+    console.log(`[${new Date().toLocaleString()}] new game`, client.id);
     let roomName = makeid(5);
     clientRooms[client.id] = roomName;
     client.emit('gameCode', roomName);
@@ -79,7 +81,9 @@ io.on('connection', client => {
     const vel = getUpdatedVelocity(keyCode);
 
     if (vel) {
-      state[roomName].players[client.number - 1].vel = vel;
+      console.log(state, roomName);
+      console.log(clientRooms);
+      state[roomName].players[client.number - 1].vel =vel;
     }
   }
 
@@ -102,12 +106,15 @@ const startGameInterval = (roomName) => {
 }
 
 const emitGameState = (room, gameState) => {
-  io.sockets.in(room)
-    .emit('gameState', JSON.stringify(gameState));
+  io.sockets.in(room).emit('gameState', JSON.stringify(gameState));
 }
 
 const emitGameOver = (room, winner) => {
-  io.sockets.in(room)
-    .emit('gameOver', JSON.stringify({ winner }));
+  for (let key in clientRooms) {
+    if (clientRooms[key] === room) {
+      delete clientRooms[key];
+    }
+  }
+  io.sockets.in(room).emit('gameOver', JSON.stringify({ winner }));
 }
 

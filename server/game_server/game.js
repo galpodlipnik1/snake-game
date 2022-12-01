@@ -46,6 +46,7 @@ function createGameState() {
 
 export const gameLoop = (state) => {
   if (!state) {
+    console.log('no state');
     return;
   }
 
@@ -59,10 +60,12 @@ export const gameLoop = (state) => {
   playerTwo.pos.y += playerTwo.vel.y;
 
   if (playerOne.pos.x < 0 || playerOne.pos.x > GRID_SIZE || playerOne.pos.y < 0 || playerOne.pos.y > GRID_SIZE) {
+    console.log('Player 1 hit the wall');
     return 2;
   }
 
   if (playerTwo.pos.x < 0 || playerTwo.pos.x > GRID_SIZE || playerTwo.pos.y < 0 || playerTwo.pos.y > GRID_SIZE) {
+    console.log('player 2 hit the wall');
     return 1;
   }
 
@@ -89,6 +92,7 @@ export const gameLoop = (state) => {
   if (playerOne.vel.x || playerOne.vel.y) {
     for (let cell of playerOne.snake) {
       if (cell.x === playerOne.pos.x && cell.y === playerOne.pos.y) {
+        console.log('player 1 hit itself');
         return 2;
       }
     }
@@ -100,6 +104,7 @@ export const gameLoop = (state) => {
   if (playerTwo.vel.x || playerTwo.vel.y) {
     for (let cell of playerTwo.snake) {
       if (cell.x === playerTwo.pos.x && cell.y === playerTwo.pos.y) {
+        console.log('player 2 hit itself');
         return 1;
       }
     }
