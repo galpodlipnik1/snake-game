@@ -14,6 +14,9 @@ const Game = () => {
     const joinGameButton = document.getElementById('joinGameButton');
     const gameCodeInput = document.getElementById('gameCodeInput');
     const gameCodeDisplay = document.getElementById('gameCodeDisplay');
+    const gameScoreDisplay = document.getElementById('gameScoreDisplay');
+    const gameTimerDisplay = document.getElementById('gameTimerDisplay');
+
     const newGame = () => {
       socket.emit('newGame');
       setGameScreenState(true);
@@ -27,12 +30,18 @@ const Game = () => {
       init();
     };
 
+    const handleGameStart = () => {
+      timerFnc();
+    };
+
     newGameButton.addEventListener('click', newGame);
     joinGameButton.addEventListener('click', joinGame);
 
     let canvas, ctx;
     let playerNumber;
+    let score = 0;
     let gameActive = false;
+    let timer = '00:00';
 
     const init = () => {
       canvas = document.getElementById('canvas');
@@ -80,8 +89,10 @@ const Game = () => {
       if (!gameActive) {
         return;
       }
-
       gameState = JSON.parse(gameState);
+      score = gameState.players[playerNumber - 1].score;
+
+      gameScoreDisplay.innerText = score;
 
       requestAnimationFrame(() => paintGame(gameState));
     };
@@ -103,6 +114,30 @@ const Game = () => {
 
     const handleInit = (number) => {
       playerNumber = number;
+    };
+
+    const timerFnc = () => {
+      let sec = 0;
+      let min = 0;
+      let timerId;
+      if (gameActive) {
+        if (timer.includes('99:99') == false) {
+          timerId = setInterval(() => {
+            sec++;
+            if (sec === 60) {
+              min++;
+              sec = 0;
+            }
+            timer = `${min < 10 ? '0' + min : min}:${sec < 10 ? '0' + sec : sec}`;
+            gameTimerDisplay.innerText = timer;
+          }, 1000);
+        } else {
+          clearInterval(timerId);
+          gameTimerDisplay.innerText = '99:99+';
+        }
+      } else {
+        clearInterval(timerId);
+      }
     };
 
     const handleGameCode = (gameCode) => {
@@ -131,6 +166,7 @@ const Game = () => {
     socket.on('gameCode', handleGameCode);
     socket.on('unknownGame', handleUnknownGame);
     socket.on('tooManyPlayers', handleTooManyPlayers);
+    socket.on('gameStart', handleGameStart);
   };
 
   return (
@@ -167,9 +203,17 @@ const Game = () => {
       <div id="gameScreen" className={`h-full ${!gameScreenState ? 'hidden' : ''}`}>
         <div className="w-full h-full flex justify-center items-center">
           <div className="flex flex-col h-full justify-center items-center">
-            <h1>
-              Your game code is: <span id="gameCodeDisplay" />
-            </h1>
+            <div className="flex flex-row items-center justify-between w-full">
+              <h1 className="text-2xl font-bold text-black">
+                SCORE: <span id="gameScoreDisplay">0</span>
+              </h1>
+              <h1>
+                TIMER: <span id="gameTimerDisplay">00:00</span>
+              </h1>
+              <h1>
+                Game Code: <span id="gameCodeDisplay" />
+              </h1>
+            </div>
             <canvas id="canvas" />
           </div>
         </div>
