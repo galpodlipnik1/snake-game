@@ -5,8 +5,8 @@ import { FRAME_RATE } from "./constants.js";
 
 const io = new Server(3000, {
   cors: {
-    origin: "http://127.0.0.1:5173",
-    methods: ["GET", "POST"]
+    origin: '*',
+    methods: '*'
   }
 });
 
