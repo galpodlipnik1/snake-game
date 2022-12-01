@@ -4,10 +4,10 @@ import { makeid } from "./util.js";
 import { FRAME_RATE } from "./constants.js";
 
 const io = new Server(3000, {
-    cors: {
-        origin: "http://localhost:5173",
-        methods: ["GET", "POST"],
-    },
+  cors: {
+    origin: "http://127.0.0.1:5173",
+    methods: ["GET", "POST"]
+  }
 });
 
 const state = {};

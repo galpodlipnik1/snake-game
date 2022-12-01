@@ -3,7 +3,14 @@ import { io } from 'socket.io-client';
 
 const Game = () => {
   const [gameScreenState, setGameScreenState] = useState(false);
-  const socket = io('http://localhost:3000');
+  const socket = io('https://localhost:3000', {
+    withCredentials: true,
+    origin: '*',
+    methods: '*',
+    allowedHeaders: '*',
+    credentials: true
+  });
+
   const BG_COLOR = '#231f20';
   const SNAKE_COLOR = '#c2c2c2';
   const FOOD_COLOR = '#e66916';
