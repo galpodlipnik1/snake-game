@@ -10,3 +10,5 @@ router.get('/getplayer/:id', getPlayer);
 router.patch('/updateplayer/:id', updatePlayerStats);
 router.delete('/deleteplayer/:id', deletePlayer);
 router.post('/loginplayer', loginPlayer);
+
+export default router;

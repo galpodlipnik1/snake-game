@@ -5,7 +5,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import chalk from 'chalk';
 
-//import playerRoutes from './routes/players.js';
+import playerRoutes from './routes/players.js';
 
 const app = express();
 
@@ -14,7 +14,7 @@ app.use(bodyParser.json({ limit: "30mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 app.use(cors());
 
-//app.use('/players', playerRoutes);
+app.use('/players', playerRoutes);
 
 app.get('/', (req, res) => {
     let date = new Date();
