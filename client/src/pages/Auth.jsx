@@ -15,10 +15,10 @@ const Auth = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (isSigningUp) {
-      await signup(formData);
+      await login(formData);
       navigate('/');
     } else {
-      await login(formData);
+      await signup(formData);
       navigate('/');
     }
   };
@@ -51,6 +51,7 @@ const Auth = () => {
                   id="username"
                   className="p-2 rounded-lg text-black"
                   placeholder="Enter your username"
+                  required
                   onChange={handleChange}
                 />
               </div>
@@ -65,6 +66,7 @@ const Auth = () => {
                     id="email"
                     className="p-2 rounded-lg text-black"
                     placeholder="Enter your email"
+                    required
                     onChange={handleChange}
                   />
                 </div>
@@ -79,6 +81,7 @@ const Auth = () => {
                   id="password"
                   className="p-2 rounded-lg text-black"
                   placeholder="Enter your Password"
+                  required
                   onChange={handleChange}
                 />
               </div>
