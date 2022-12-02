@@ -10,7 +10,16 @@ const playerSchema = mongoose.Schema({
     email: String,
     clientId: String,
     stats : { 
-        type: Array, 
+        type: Array(
+            Object({
+                numOfGames: Number,
+                numOfWins: Number,
+                numOfLosses: Number,
+                winRate: Number,
+                avgScore: Number,
+                avgTime: Number,
+            })
+        ),
         default: [], 
         require: false 
     },
