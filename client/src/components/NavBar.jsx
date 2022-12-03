@@ -16,12 +16,12 @@ const NavBar = () => {
     <div className="w-full bg-gray-800 h-24">
       <div className="h-full flex items-center justify-between">
         <div
-          className="text-white font-bold text-2xl ml-4"
+          className="text-white font-bold text-4xl ml-10"
           onClick={() => {
             navigate('/');
           }}
         >
-          🐍 Snake 🐍
+          🐍
         </div>
         {player == '' ? (
           <div className="mx-16">
