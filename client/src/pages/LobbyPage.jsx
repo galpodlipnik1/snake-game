@@ -1,9 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { io } from 'socket.io-client';
 
 const LobbyPage = () => {
   const [gameCode, setGameCode] = useState('');
+  const [lobbys, setLobbys] = useState([]);
   const navigate = useNavigate();
+  const socket = io('https://localhost:3000');
+
+  useEffect(() => {
+    socket.emit('getLobbys');
+    setInterval(() => {
+      try {
+        socket.emit('getLobbys');
+      } catch (error) {
+        /* empty */
+      }
+    }, 10000);
+  }, []);
 
   const handleNewGame = () => {
     navigate('/game/create/null');
@@ -16,12 +30,16 @@ const LobbyPage = () => {
       alert('Please enter a game code');
     }
   };
+
+  const handleLobbys = (servLobbys) => {
+    const lobbys = JSON.parse(servLobbys);
+    setLobbys(lobbys);
+  };
+
+  socket.on('lobbys', handleLobbys);
   return (
-    <>
-      <div
-        id="initialScreen"
-        className={`w-full h-[100vh] flex flex-col justify-center items-center`}
-      >
+    <div className="w-full h-[100vh]">
+      <div id="initialScreen" className={`w-full flex flex-col items-center mt-10`}>
         <h1 className="text-4xl font-bold text-black">Snake Game</h1>
         <button
           type="submit"
@@ -50,7 +68,27 @@ const LobbyPage = () => {
           Join Game
         </button>
       </div>
-    </>
+      <div className="h-full grid grid-cols-4 gap-4 mt-10 ml-5">
+        {lobbys.map((lobby) => (
+          <div key={lobby.gameCode} className="bg-gray-200 rounded-md p-4 h-[20%] flex flex-col">
+            <h1 className="text-2xl text-black">
+              Game Code: <span className="font-bold underline">{lobby.gameCode}</span>
+            </h1>
+            <h1 className="text-2xl text-black">
+              Players: <span className="font-bold">{lobby.players}</span>
+            </h1>
+            <button
+              type="submit"
+              className="px-4 py-2 mt-4 text-white bg-black rounded-md"
+              id="joinGameButton"
+              onClick={() => navigate(`/game/join/${lobby.gameCode}`)}
+            >
+              Join Game
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 };
 

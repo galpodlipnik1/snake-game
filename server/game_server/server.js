@@ -94,12 +94,25 @@ io.on('connection', client => {
     const vel = getUpdatedVelocity(keyCode);
 
     if (vel) {
-      console.log(state, roomName);
-      console.log(clientRooms);
       state[roomName].players[client.number - 1].vel =vel;
     }
   }
 
+  const handleLobbys = () => {
+    const lobbys = [];
+    for (let key in clientRooms) {
+      const room = io.sockets.adapter.rooms.get(clientRooms[key]);
+      let numClients = 0;
+      if (room) {
+        numClients = room.size;
+      }
+      lobbys.push({gameCode: clientRooms[key], players: numClients});
+    }
+    console.log(`[${new Date().toLocaleString()}] emited lobbys`, lobbys.length);
+    client.emit('lobbys', JSON.stringify(lobbys));
+  };
+  
+  client.on('getLobbys', handleLobbys);
   client.on('keydown', handleKeydown);
   client.on('newGame', handleNewGame);
   client.on('joinGame', handleJoinGame);
@@ -130,6 +143,20 @@ const emitGameOver = (room, winner) => {
   }
   io.sockets.in(room).emit('gameOver', JSON.stringify({ winner }));
 }
+
+setInterval(() => {
+  for(let key in clientRooms) {
+    const room = io.sockets.adapter.rooms.get(clientRooms[key]);
+    let numClients = 0;
+    if (room) {
+      numClients = room.size;
+    }
+    if (numClients === 0) {
+      delete clientRooms[key];
+    }
+  }
+}, 10000);
+
 
 server.listen(3000, () => {
   console.log(`[${new Date().toLocaleString()}] listening on port 3000`);
