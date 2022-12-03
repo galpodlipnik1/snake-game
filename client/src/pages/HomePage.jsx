@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 const HomePage = () => {
   const navigate = useNavigate();
   return (
-    <div className="w-full h-[82vh]">
+    <div className="w-full h-[81.3vh]">
       <NavBar />
       <div className="h-full bg-green-900 flex flex-col">
         <div className="mt-3 flex flex-col items-center">

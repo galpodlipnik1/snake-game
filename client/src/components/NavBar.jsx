@@ -16,7 +16,7 @@ const NavBar = () => {
     <div className="w-full bg-gray-800 h-24">
       <div className="h-full flex items-center justify-between">
         <div
-          className="text-white font-bold text-4xl ml-10"
+          className="text-white font-bold text-4xl ml-10 cursor-pointer select-none"
           onClick={() => {
             navigate('/');
           }}
@@ -39,16 +39,16 @@ const NavBar = () => {
             </button>
           </div>
         ) : (
-          <div className="flex justify-center items-center mx-16">
-            <div className="w-[50px] h-[50px] flex justify-center items-center bg-purple-500 rounded-full mr-3">
+          <div className="flex justify-center items-center mx-16 ">
+            <div className="w-[40px] h-[40px] flex justify-center items-center bg-purple-500 rounded-full mr-3">
               <span className="text-white text-2xl">{player.username.charAt(0).toUpperCase()}</span>
             </div>
             <div className="mb-1">
-              <span className="text-white text-2xl">{player.username}</span>
+              <span className="text-white text-xl">{player.username}</span>
             </div>
             <div>
               <button
-                className="bg-red-400 text-white font-bold py-2 px-4 rounded ml-4 hover:bg-red-500"
+                className="bg-red-400 text-white font-bold py-1 px-3 rounded ml-4 hover:bg-red-500"
                 onClick={() => {
                   setPlayer('');
                   localStorage.clear();
