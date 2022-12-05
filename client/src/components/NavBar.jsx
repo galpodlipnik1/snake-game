@@ -5,12 +5,16 @@ import { useStateContext } from '../context/ContextProvider';
 const NavBar = () => {
   const navigate = useNavigate();
   const [player, setPlayer] = useState('');
-  const { setIsLogged, setUser } = useStateContext();
+  const { setIsLogged, setUser, user } = useStateContext();
 
   useEffect(() => {
-    if (localStorage.getItem('profile')) {
-      const player = JSON.parse(localStorage.getItem('profile')).result;
-      setPlayer(player);
+    if (localStorage.getItem('profile') || user) {
+      if (user) {
+        setPlayer(user);
+      } else {
+        const player = JSON.parse(localStorage.getItem('profile')).result;
+        setPlayer(player);
+      }
     }
   }, []);
   return (
