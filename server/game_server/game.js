@@ -96,7 +96,7 @@ export const singleGameLoop = (state) => {
 
     playerOne.score += 1;
 
-    randomFood(state);
+    SinglerandomFood(state);
   }
 
   if (playerOne.vel.x || playerOne.vel.y) {
@@ -221,7 +221,7 @@ const SinglerandomFood = (state) => {
 
   for (let cell of state.players[0].snake) {
     if (cell.x === food.x && cell.y === food.y) {
-      return randomFood(state);
+      return SinglerandomFood(state);
     }
   }
 
