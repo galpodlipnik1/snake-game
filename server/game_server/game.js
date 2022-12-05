@@ -6,6 +6,12 @@ export const initGame = () => {
   return state;
 }
 
+export const initSingleGame = () => {
+  const state = createSingleGameState()
+  SinglerandomFood(state);
+  return state;
+}
+
 function createGameState() {
   return {
     players: [{
@@ -43,6 +49,71 @@ function createGameState() {
     gridsize: GRID_SIZE,
   };
 }
+
+function createSingleGameState() {
+  return {
+    players: [{
+      pos: {
+        x: 3,
+        y: 10,
+      },
+      vel: {
+        x: 0,
+        y: 0,
+      },
+      snake: [
+        {x: 1, y: 10},
+        {x: 2, y: 10},
+        {x: 3, y: 10},
+      ],
+      score: 0
+    }],
+    food: {},
+    gridsize: GRID_SIZE,
+  };
+}
+
+export const singleGameLoop = (state) => {
+  if (!state) {
+    console.log('no state');
+    return;
+  }
+
+  const playerOne = state.players[0];
+
+  playerOne.pos.x += playerOne.vel.x;
+  playerOne.pos.y += playerOne.vel.y;
+
+  if (playerOne.pos.x < 0 || playerOne.pos.x > GRID_SIZE || playerOne.pos.y < 0 || playerOne.pos.y > GRID_SIZE) {
+    console.log('Player 1 hit the wall');
+    return 2;
+  }
+
+  if (state.food.x === playerOne.pos.x && state.food.y === playerOne.pos.y) {
+    playerOne.snake.push({ ...playerOne.pos });
+    playerOne.pos.x += playerOne.vel.x;
+    playerOne.pos.y += playerOne.vel.y;
+
+    playerOne.score += 1;
+
+    randomFood(state);
+  }
+
+  if (playerOne.vel.x || playerOne.vel.y) {
+    for (let cell of playerOne.snake) {
+      if (cell.x === playerOne.pos.x && cell.y === playerOne.pos.y) {
+        console.log('player 1 hit itself');
+        return 2;
+      }
+    }
+
+    playerOne.snake.push({ ...playerOne.pos });
+    playerOne.snake.shift();
+  }
+
+  return false;
+  
+};
 
 export const gameLoop = (state) => {
   if (!state) {
@@ -134,6 +205,21 @@ const randomFood = (state) => {
   }
 
   for (let cell of state.players[1].snake) {
+    if (cell.x === food.x && cell.y === food.y) {
+      return randomFood(state);
+    }
+  }
+
+  state.food = food;
+}
+
+const SinglerandomFood = (state) => {
+  let food = {
+    x: Math.floor(Math.random() * GRID_SIZE),
+    y: Math.floor(Math.random() * GRID_SIZE),
+  }
+
+  for (let cell of state.players[0].snake) {
     if (cell.x === food.x && cell.y === food.y) {
       return randomFood(state);
     }

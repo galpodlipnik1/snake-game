@@ -39,6 +39,14 @@ const HomePage = () => {
     }
   };
 
+  const handleSinglePlayer = () => {
+    if (isLogged) {
+      navigate('/game/single/null');
+    } else {
+      navigate('/auth/login');
+    }
+  };
+
   return (
     <div className="w-full h-[81.3vh]">
       <NavBar />
@@ -62,10 +70,19 @@ const HomePage = () => {
               type="button"
               className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-10 mx-5 hover:translate-y-3 transition duration-500 ease-in-out"
               onClick={() => {
+                handleSinglePlayer();
+              }}
+            >
+              SinglePlayer
+            </button>
+            <button
+              type="button"
+              className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-10 mx-5 hover:translate-y-3 transition duration-500 ease-in-out"
+              onClick={() => {
                 handleInstaPlay();
               }}
             >
-              Insta Play
+              Insta Play(Multiplayer)
             </button>
             <button
               type="button"
@@ -74,7 +91,7 @@ const HomePage = () => {
                 handleLobby();
               }}
             >
-              Lobby
+              Lobby(Multiplayer)
             </button>
             <button
               type="button"
