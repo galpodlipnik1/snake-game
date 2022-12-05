@@ -1,5 +1,5 @@
 import { Server } from "socket.io";
-import { initGame, gameLoop, getUpdatedVelocity } from "./game.js";
+import { initGame, initSingleGame, gameLoop, singleGameLoop, getUpdatedVelocity } from "./game.js";
 import { makeid } from "./util.js";
 import { FRAME_RATE } from "./constants.js";
 import https from 'https';
@@ -25,6 +25,9 @@ const io = new Server(server, {
 
 const state = {};
 const clientRooms = {};
+
+const singleClientRooms = {};
+const singleState = {};
 
 io.on('connection', client => {
 
@@ -66,6 +69,23 @@ io.on('connection', client => {
     startGameInterval(roomName);
   }
 
+  const handleNewSingleGame = () => {
+    console.log(`[${new Date().toLocaleString()}] new game`, client.id);
+    
+    let roomName = makeid(5);
+    singleClientRooms[client.id] = roomName;
+
+    singleState[roomName] = initSingleGame();
+
+    client.join(roomName);
+    client.number = 1;
+    client.emit('init', 1);
+
+    io.sockets.in(roomName).emit('singleGameStart');
+
+    startSingleGameInterval(roomName);
+  };
+
   const handleNewGame = () => {
     console.log(`[${new Date().toLocaleString()}] new game`, client.id);
     let roomName = makeid(5);
@@ -78,6 +98,25 @@ io.on('connection', client => {
     client.number = 1;
     client.emit('init', 1);
   }
+  const handleKeyDownSingle = (keyCode) => {
+    const roomName = singleClientRooms[client.id];
+    if(!roomName) {
+      return;
+    }
+
+    try {
+      keyCode = parseInt(keyCode);
+    } catch (error) {
+      console.log(e);
+      return;
+    }
+
+    const vel = getUpdatedVelocity(keyCode);
+
+    if(vel) {
+      singleState[roomName].players[0].vel = vel;
+    }
+  };
 
   const handleKeydown = (keyCode) => {
     const roomName = clientRooms[client.id];
@@ -114,9 +153,24 @@ io.on('connection', client => {
   
   client.on('getLobbys', handleLobbys);
   client.on('keydown', handleKeydown);
+  client.on('singleKeyDown', handleKeyDownSingle);
   client.on('newGame', handleNewGame);
   client.on('joinGame', handleJoinGame);
+  client.on('newSingleGame', handleNewSingleGame);
 });
+
+const startSingleGameInterval = (roomName) => {
+  const intervalId = setInterval(() => {
+    const winner = singleGameLoop(singleState[roomName]);
+    if(!winner){
+      emitSingleGameState(roomName, singleState[roomName]);
+    } else {
+      emitSingleGameOver(roomName, winner);
+      singleState[roomName] = null;
+      clearInterval(intervalId);
+    }
+  }, 1000 / FRAME_RATE);
+}
 
 const startGameInterval = (roomName) => {
     const intervalId = setInterval(() => {
@@ -131,8 +185,22 @@ const startGameInterval = (roomName) => {
     }, 1000 / FRAME_RATE);
 }
 
+const emitSingleGameState = (room, gameState) => {
+  io.sockets.in(room).emit('singleGameState', JSON.stringify(gameState));
+}
+
 const emitGameState = (room, gameState) => {
   io.sockets.in(room).emit('gameState', JSON.stringify(gameState));
+}
+
+const emitSingleGameOver = (room, winner) => {
+  for(let key in singleClientRooms) {
+    if(singleClientRooms[key] === room) {
+      delete singleClientRooms[key];
+    }
+  }
+  
+  io.sockets.in(room).emit('singleGameOver', JSON.stringify({ winner }));
 }
 
 const emitGameOver = (room, winner) => {

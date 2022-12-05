@@ -17,6 +17,7 @@ const NavBar = () => {
       }
     }
   }, []);
+
   return (
     <div className="w-full bg-gray-800 h-24">
       <div className="h-full flex items-center justify-between">
@@ -46,7 +47,11 @@ const NavBar = () => {
         ) : (
           <div className="flex justify-center items-center mx-16 ">
             <div className="w-[40px] h-[40px] flex justify-center items-center bg-purple-500 rounded-full mr-3">
-              <span className="text-white text-2xl">{player.username.charAt(0).toUpperCase()}</span>
+              <span className="text-white text-2xl">
+                {player.username
+                  ? player.username.charAt(0).toUpperCase()
+                  : window.location.reload()}
+              </span>
             </div>
             <div className="mb-1">
               <span className="text-white text-xl">{player.username}</span>
