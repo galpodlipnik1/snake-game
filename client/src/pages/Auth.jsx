@@ -2,11 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { login, signup } from '../actions/players';
 
+import { useStateContext } from '../context/ContextProvider';
+
 const Auth = () => {
   const navigate = useNavigate();
   const [isSigningUp, setIsSigningUp] = useState(false);
   const [formData, setFormData] = useState({ username: '', password: '', email: '' });
   const { type } = useParams();
+  const { setUser, setIsLogged } = useStateContext();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -15,10 +18,14 @@ const Auth = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (isSigningUp) {
-      await login(formData);
+      const res = await login(formData);
+      setUser(res);
+      setIsLogged(true);
       navigate('/');
     } else {
-      await signup(formData);
+      const res = await signup(formData);
+      setUser(res);
+      setIsLogged(true);
       navigate('/');
     }
   };
@@ -32,7 +39,7 @@ const Auth = () => {
   }, [type]);
   return (
     <>
-      <div className="w-full h-screen">
+      <div className="w-full h-screen bg-green-900">
         <div className="w-full h-full flex items-center justify-center">
           <div className="md:w-[40%] w-8/12 p-4 bg-gray-800 rounded-lg">
             <div className="flex justify-center items-center">

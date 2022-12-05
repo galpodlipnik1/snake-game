@@ -1,9 +1,44 @@
 import React from 'react';
 import { NavBar } from '../components';
 import { useNavigate } from 'react-router-dom';
+import { useStateContext } from '../context/ContextProvider';
 
 const HomePage = () => {
   const navigate = useNavigate();
+  const { isLogged } = useStateContext();
+
+  const handleInstaPlay = () => {
+    if (isLogged) {
+      navigate('/game/create/null');
+    } else {
+      navigate('/auth/login');
+    }
+  };
+
+  const handleLobby = () => {
+    if (isLogged) {
+      navigate('/lobby');
+    } else {
+      navigate('/auth/login');
+    }
+  };
+
+  const handleLeaderboard = () => {
+    if (isLogged) {
+      navigate('/leaderboard');
+    } else {
+      navigate('/auth/login');
+    }
+  };
+
+  const handleSettings = () => {
+    if (isLogged) {
+      navigate('/settings');
+    } else {
+      navigate('/auth/login');
+    }
+  };
+
   return (
     <div className="w-full h-[81.3vh]">
       <NavBar />
@@ -27,7 +62,7 @@ const HomePage = () => {
               type="button"
               className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-10 mx-5 hover:translate-y-3 transition duration-500 ease-in-out"
               onClick={() => {
-                navigate('/game/create/null');
+                handleInstaPlay();
               }}
             >
               Insta Play
@@ -36,7 +71,7 @@ const HomePage = () => {
               type="button"
               className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-10 mx-5 hover:translate-y-3 transition duration-500 ease-in-out"
               onClick={() => {
-                navigate('/lobby');
+                handleLobby();
               }}
             >
               Lobby
@@ -45,7 +80,7 @@ const HomePage = () => {
               type="button"
               className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-10 mx-5 hover:translate-y-3 transition duration-500 ease-in-out"
               onClick={() => {
-                navigate('/leaderboard');
+                handleLeaderboard();
               }}
             >
               Leaderboard
@@ -54,7 +89,7 @@ const HomePage = () => {
               type="button"
               className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-10 mx-5 hover:translate-y-3 transition duration-500 ease-in-out mb-5"
               onClick={() => {
-                navigate('/settings');
+                handleSettings();
               }}
             >
               Profile/Settings

@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useStateContext } from '../context/ContextProvider';
 
 const NavBar = () => {
   const navigate = useNavigate();
   const [player, setPlayer] = useState('');
+  const { setIsLogged, setUser } = useStateContext();
 
   useEffect(() => {
     if (localStorage.getItem('profile')) {
       const player = JSON.parse(localStorage.getItem('profile')).result;
-      console.log(player);
       setPlayer(player);
     }
   }, []);
@@ -52,6 +53,8 @@ const NavBar = () => {
                 onClick={() => {
                   setPlayer('');
                   localStorage.clear();
+                  setUser(null);
+                  setIsLogged(false);
                   navigate('/');
                 }}
               >
