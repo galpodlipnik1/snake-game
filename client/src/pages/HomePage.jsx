@@ -82,7 +82,7 @@ const HomePage = () => {
                 handleInstaPlay();
               }}
             >
-              Insta Play(Multiplayer)
+              Create Game(Multiplayer)
             </button>
             <button
               type="button"
