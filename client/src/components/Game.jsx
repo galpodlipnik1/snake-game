@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 const Game = ({ type, gameCode }) => {
   const navigate = useNavigate();
-  const socket = io('https://localhost:3000');
+  const socket = io('http://localhost:3000');
   const BG_COLOR = '#231f20';
   const SNAKE_COLOR = '#c2c2c2';
   const FOOD_COLOR = '#e66916';

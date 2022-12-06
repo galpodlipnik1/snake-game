@@ -6,7 +6,7 @@ const LobbyPage = () => {
   const [gameCode, setGameCode] = useState('');
   const [lobbys, setLobbys] = useState([]);
   const navigate = useNavigate();
-  const socket = io('https://localhost:3000');
+  const socket = io('http://localhost:3000');
 
   useEffect(() => {
     socket.emit('getLobbys');

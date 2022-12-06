@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
 import { io } from 'socket.io-client';
 import { useNavigate } from 'react-router-dom';
+import { updatePlayerStatsSingle } from '../actions/players';
 
 const SingleGame = () => {
   const navigate = useNavigate();
-  const socket = io('https://localhost:3000');
+  const socket = io('http://localhost:3000');
   const BG_COLOR = '#231f20';
   const SNAKE_COLOR = '#c2c2c2';
   const FOOD_COLOR = '#e66916';
@@ -31,6 +32,7 @@ const SingleGame = () => {
   let playerNumber;
   let score = 0;
   let timer = '00:00';
+  let timerSec = 0;
 
   const keydown = (e) => {
     socket.emit('singleKeyDown', e.keyCode);
@@ -95,6 +97,11 @@ const SingleGame = () => {
   };
 
   const handleGameOver = (data) => {
+    const jsonData = JSON.parse(data);
+    let finnalState = jsonData.finnalState;
+    finnalState = { ...finnalState, timer: timerSec, winner: jsonData.winner == 2 ? 0 : 1 };
+
+    updatePlayerStatsSingle(finnalState);
     console.log(playerNumber);
     if (!gameActive) {
       return;
@@ -121,6 +128,7 @@ const SingleGame = () => {
     if (gameActive) {
       if (timer.includes('99:99') == false) {
         timerId = setInterval(() => {
+          timerSec++;
           sec++;
           if (sec === 60) {
             min++;
