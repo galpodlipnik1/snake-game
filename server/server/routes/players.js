@@ -7,7 +7,7 @@ import { addPlayer, getPlayers, getPlayer, updatePlayerStats, deletePlayer, logi
 router.post('/addplayer', addPlayer);
 router.get('/getplayers', getPlayers);
 router.get('/getplayer/:id', getPlayer);
-router.patch('/updateplayer/:id', updatePlayerStats);
+router.patch('/updateplayer/:id/:type', updatePlayerStats);
 router.delete('/deleteplayer/:id', deletePlayer);
 router.post('/loginplayer', loginPlayer);
 

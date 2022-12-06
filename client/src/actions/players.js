@@ -41,3 +41,12 @@ export const updatePlayerStats = async (stats) => {
     console.log(error);
   }
 };
+
+export const getPlayers = async () => {
+  try {
+    const { data } = await api.getPlayers();
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};

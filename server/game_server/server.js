@@ -2,25 +2,15 @@ import { Server } from "socket.io";
 import { initGame, initSingleGame, gameLoop, singleGameLoop, getUpdatedVelocity } from "./game.js";
 import { makeid } from "./util.js";
 import { FRAME_RATE } from "./constants.js";
-import https from 'https';
-import fs from 'fs';
 
-const options = {
-  key: fs.readFileSync('key.pem'),
-  cert: fs.readFileSync('cert.pem')
-};
-
-const server = https.createServer(options, (req, res) => {
-  res.writeHead(200);
-  res.end('hello world\n');
-});
-
-const io = new Server(server, {
+const io = new Server(3000, {
   cors: {
-    origin: "*",
-    methods: ["GET", "POST"]
+    origin: '*',
+    methods: ['GET', 'POST']
   }
 });
+
+
 
 
 const state = {};
@@ -199,8 +189,9 @@ const emitSingleGameOver = (room, winner) => {
       delete singleClientRooms[key];
     }
   }
+  const finnalState = singleState[room];
   
-  io.sockets.in(room).emit('singleGameOver', JSON.stringify({ winner }));
+  io.sockets.in(room).emit('singleGameOver', JSON.stringify({ winner, finnalState }));
 }
 
 const emitGameOver = (room, winner) => {
@@ -209,7 +200,8 @@ const emitGameOver = (room, winner) => {
       delete clientRooms[key];
     }
   }
-  io.sockets.in(room).emit('gameOver', JSON.stringify({ winner }));
+  const finnalState = state[room];
+  io.sockets.in(room).emit('gameOver', JSON.stringify({ winner, finnalState }));
 }
 
 setInterval(() => {
@@ -224,8 +216,3 @@ setInterval(() => {
     }
   }
 }, 10000);
-
-
-server.listen(3000, () => {
-  console.log(`[${new Date().toLocaleString()}] listening on port 3000`);
-})
