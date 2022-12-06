@@ -145,6 +145,11 @@ export const gameLoop = (state) => {
     return 2;
   }
 
+  if(playerTwo.pos.x == playerOne.pos.x && playerTwo.pos.y == playerOne.pos.y) {
+    console.log('players hit each other');
+    return 1;
+  }
+
   if (state.food.x === playerOne.pos.x && state.food.y === playerOne.pos.y) {
     playerOne.snake.push({ ...playerOne.pos });
     playerOne.pos.x += playerOne.vel.x;

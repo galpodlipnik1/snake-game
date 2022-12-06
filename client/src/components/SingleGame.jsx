@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { io } from 'socket.io-client';
 import { useNavigate } from 'react-router-dom';
 import { updatePlayerStatsSingle } from '../actions/players';
+import { NavBar } from '../components';
 
 const SingleGame = () => {
   const navigate = useNavigate();
@@ -101,8 +102,7 @@ const SingleGame = () => {
     let finnalState = jsonData.finnalState;
     finnalState = { ...finnalState, timer: timerSec, winner: jsonData.winner == 2 ? 0 : 1 };
 
-    updatePlayerStatsSingle(finnalState);
-    console.log(playerNumber);
+    updatePlayerStatsSingle(finnalState, playerNumber);
     if (!gameActive) {
       return;
     }
@@ -159,6 +159,7 @@ const SingleGame = () => {
   return (
     <>
       <section className="w-full h-[100vh]">
+        <NavBar />
         <div id="gameScreen" className={`h-full`}>
           <div className="w-full h-full flex justify-center items-center">
             <div className="flex flex-col h-full justify-center items-center">

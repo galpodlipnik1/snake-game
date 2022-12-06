@@ -86,8 +86,11 @@ export const getPlayer = async (req, res) => {
 export const updatePlayerStats= async (req, res) => {
     const { id,type } = req.params;
 
-    let { timer, winner } = req.body;
-    let score = req.body.players[0].score;
+    let { playerNumber } = req.body;
+    let players = req.body.updatedStats.players;
+    let timer = req.body.updatedStats.timer;
+    let winner = req.body.updatedStats.winner;
+    let score = players[playerNumber - 1].score;
     score = parseInt(score);
     timer = parseInt(timer);
     winner = parseInt(winner);
@@ -97,7 +100,6 @@ export const updatePlayerStats= async (req, res) => {
         const player = await PlayerModal.findById(id);
         let statObj = {};
         let updatedPlayer; 
-
         if(type === 'singleplayer') {
             statObj = {
                 numOfGames: Number(player.singleStats.numOfGames + 1),
