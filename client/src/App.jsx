@@ -1,11 +1,11 @@
 import React from 'react';
-import { BrowserRouter, Routes as Switch, Route } from 'react-router-dom';
+import { HashRouter, Routes as Switch, Route } from 'react-router-dom';
 
 import { HomePage, SettingsPage, Leaderboard, LobbyPage, GamePage, Auth } from './pages';
 
 const App = () => {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Switch>
         <Route path="/" element={<HomePage />} />
         <Route path="/lobby" element={<LobbyPage />} />
@@ -14,7 +14,7 @@ const App = () => {
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="/auth/:type" element={<Auth />} />
       </Switch>
-    </BrowserRouter>
+    </HashRouter>
   );
 };
 
