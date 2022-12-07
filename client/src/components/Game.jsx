@@ -1,10 +1,12 @@
 import React, { useEffect } from 'react';
 import { io } from 'socket.io-client';
 import { useNavigate } from 'react-router-dom';
+import { updatePlayerStats } from '../actions/players';
+import { NavBar } from '../components';
 
 const Game = ({ type, gameCode }) => {
   const navigate = useNavigate();
-  const socket = io('https://localhost:3000');
+  const socket = io('http://localhost:3000');
   const BG_COLOR = '#231f20';
   const SNAKE_COLOR = '#c2c2c2';
   const FOOD_COLOR = '#e66916';
@@ -35,6 +37,7 @@ const Game = ({ type, gameCode }) => {
   let playerNumber;
   let score = 0;
   let timer = '00:00';
+  let timerSec = 0;
 
   const keydown = (e) => {
     socket.emit('keydown', e.keyCode);
@@ -105,6 +108,15 @@ const Game = ({ type, gameCode }) => {
   };
 
   const handleGameOver = (data) => {
+    const jsonData = JSON.parse(data);
+    let finnalState = jsonData.finnalState;
+    finnalState = {
+      ...finnalState,
+      timer: timerSec,
+      winner: jsonData.winner == playerNumber ? 1 : 0
+    };
+
+    updatePlayerStats(finnalState, playerNumber);
     if (!gameActive) {
       return;
     }
@@ -134,6 +146,7 @@ const Game = ({ type, gameCode }) => {
     if (gameActive) {
       if (timer.includes('99:99') == false) {
         timerId = setInterval(() => {
+          timerSec++;
           sec++;
           if (sec === 60) {
             min++;
@@ -178,6 +191,7 @@ const Game = ({ type, gameCode }) => {
   return (
     <>
       <section className="w-full h-[100vh]">
+        <NavBar />
         <div id="gameScreen" className={`h-full`}>
           <div className="w-full h-full flex justify-center items-center">
             <div className="flex flex-col h-full justify-center items-center">

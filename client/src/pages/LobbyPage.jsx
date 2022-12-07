@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { io } from 'socket.io-client';
+import { NavBar } from '../components';
 
 const LobbyPage = () => {
   const [gameCode, setGameCode] = useState('');
   const [lobbys, setLobbys] = useState([]);
   const navigate = useNavigate();
-  const socket = io('https://localhost:3000');
+  const socket = io('http://localhost:3000');
 
   useEffect(() => {
     socket.emit('getLobbys');
@@ -39,6 +40,7 @@ const LobbyPage = () => {
   socket.on('lobbys', handleLobbys);
   return (
     <div className="w-full h-[100vh]">
+      <NavBar />
       <div id="initialScreen" className={`w-full flex flex-col items-center mt-10`}>
         <h1 className="text-4xl font-bold text-black">Snake Game</h1>
         <button

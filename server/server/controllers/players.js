@@ -2,6 +2,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import chalk from 'chalk';
+import mongoose from 'mongoose';
 
 dotenv.config();
 
@@ -20,7 +21,26 @@ export const addPlayer = async (req, res) => {
 
         const hashedPassword = await bcrypt.hash(password, 12);
 
-        const result = await PlayerModal.create({ username, password: hashedPassword, email });
+        const statsObj = {
+            numOfGames: 0,
+            numOfWins: 0,
+            numOfLosses: 0,
+            winRate: 0,
+            avgScore: 0,
+            avgTime: 0,
+            combinedScore: 0,
+            combinedTime: 0,
+        }
+
+        const singleStatsObj = {
+            numOfGames: 0,
+            avgScore: 0,
+            avgTime: 0,
+            combinedScore: 0,
+            combinedTime: 0,
+        }
+
+        const result = await PlayerModal.create({ username, password: hashedPassword, email, stats: statsObj, singleStats: singleStatsObj });
 
         const token = jwt.sign({ username: result.username, id: result._id }, secret, { expiresIn: "24h" });
 
@@ -64,15 +84,45 @@ export const getPlayer = async (req, res) => {
 };
 
 export const updatePlayerStats= async (req, res) => {
-    const { id } = req.params;
+    const { id,type } = req.params;
 
-    const { stats } = req.body;
+    let { playerNumber } = req.body;
+    let players = req.body.updatedStats.players;
+    let timer = req.body.updatedStats.timer;
+    let winner = req.body.updatedStats.winner;
+    let score = players[playerNumber - 1].score;
+    score = parseInt(score);
+    timer = parseInt(timer);
+    winner = parseInt(winner);
     try {
         if(!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No player with id: ${id}`);
 
         const player = await PlayerModal.findById(id);
-
-        const updatedPlayer = await PlayerModal.findByIdAndUpdate(id, { stats }, { new: true });
+        let statObj = {};
+        let updatedPlayer; 
+        if(type === 'singleplayer') {
+            statObj = {
+                numOfGames: Number(player.singleStats.numOfGames + 1),
+                combinedScore: Number(player.singleStats.combinedScore + score),
+                combinedTime: Number(player.singleStats.combinedTime + timer),
+                avgScore: Number((player.singleStats.combinedScore + score) / (player.singleStats.numOfGames + 1)),
+                avgTime: Number((player.singleStats.combinedTime + timer) / (player.singleStats.numOfGames + 1)),
+            }
+            
+            updatedPlayer = await PlayerModal.findByIdAndUpdate(id, { singleStats: statObj }, { new: true });
+        } else {
+            statObj = {
+                numOfGames: Number(player.stats.numOfGames + 1),
+                numOfWins: Number(player.stats.numOfWins + winner),
+                numOfLosses: Number(player.stats.numOfLosses + winner == 0 ? 1 : 0),
+                winRate: Number((player.stats.numOfWins + winner) / (player.stats.numOfGames + 1)),
+                combinedScore: Number(player.stats.combinedScore + score),
+                combinedTime: Number(player.stats.combinedTime + timer),
+                avgScore: Number((player.stats.combinedScore + score) / (player.stats.numOfGames + 1)),
+                avgTime: Number((player.stats.combinedTime + timer) / (player.stats.numOfGames + 1)),
+            }
+            updatedPlayer = await PlayerModal.findByIdAndUpdate(id, { stats: statObj }, { new: true });
+        }
 
         console.log(chalk.green(`[${dateAndTime}] Player stats updated(${player.username})`));
         res.json(updatedPlayer);
