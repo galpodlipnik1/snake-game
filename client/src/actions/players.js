@@ -20,11 +20,11 @@ export const signup = async (formData) => {
   }
 };
 
-export const updatePlayerStatsSingle = async (stats) => {
+export const updatePlayerStatsSingle = async (stats, playerNumber) => {
   try {
     const id = JSON.parse(localStorage.getItem('profile')).result._id;
 
-    const { data } = await api.updatePlayerStats(id, stats, 'singleplayer');
+    const { data } = await api.updatePlayerStats(id, stats, 'singleplayer', playerNumber);
     return data;
   } catch (error) {
     console.log(error);
