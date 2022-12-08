@@ -8,7 +8,6 @@ import dotenv from 'dotenv';
 import chalk from 'chalk';
 
 import playerRoutes from './routes/players.js';
-import leaderboardRoutes from './routes/leaderboard.js';
 
 const app = express();
 
@@ -19,7 +18,6 @@ app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 app.use(cors());
 
 app.use('/players', playerRoutes);
-app.use('/leaderboard', leaderboardRoutes);
 
 app.get('/', (req, res) => {
     let date = new Date();
