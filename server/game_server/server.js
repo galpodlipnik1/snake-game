@@ -19,6 +19,8 @@ const clientRooms = {};
 const singleClientRooms = {};
 const singleState = {};
 
+let keySettings = {};
+
 io.on('connection', client => {
 
   const handleJoinGame = (roomName) => {
@@ -90,6 +92,7 @@ io.on('connection', client => {
   }
   const handleKeyDownSingle = (keyCode) => {
     const roomName = singleClientRooms[client.id];
+    const state = singleState[roomName];
     if(!roomName) {
       return;
     }
@@ -101,7 +104,7 @@ io.on('connection', client => {
       return;
     }
 
-    const vel = getUpdatedVelocity(keyCode);
+    const vel = getUpdatedVelocity(keyCode, keySettings, state, 0);
 
     if(vel) {
       singleState[roomName].players[0].vel = vel;
@@ -110,6 +113,7 @@ io.on('connection', client => {
 
   const handleKeydown = (keyCode) => {
     const roomName = clientRooms[client.id];
+    const Gamestate = state[roomName];
     if (!roomName) {
       return;
     }
@@ -119,8 +123,8 @@ io.on('connection', client => {
       console.error(e);
       return;
     }
-
-    const vel = getUpdatedVelocity(keyCode);
+    const player = client.number - 1;
+    const vel = getUpdatedVelocity(keyCode, keySettings, Gamestate, player);
 
     if (vel) {
       state[roomName].players[client.number - 1].vel =vel;
@@ -140,6 +144,10 @@ io.on('connection', client => {
     console.log(`[${new Date().toLocaleString()}] emited lobbys`, lobbys.length);
     client.emit('lobbys', JSON.stringify(lobbys));
   };
+
+  const handleKeySettingsSingle = (keyCodes) => {
+    keySettings = keyCodes;
+  };
   
   client.on('getLobbys', handleLobbys);
   client.on('keydown', handleKeydown);
@@ -147,6 +155,7 @@ io.on('connection', client => {
   client.on('newGame', handleNewGame);
   client.on('joinGame', handleJoinGame);
   client.on('newSingleGame', handleNewSingleGame);
+  client.on('keySettings', handleKeySettingsSingle);
 });
 
 const startSingleGameInterval = (roomName) => {

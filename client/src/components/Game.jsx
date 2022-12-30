@@ -3,6 +3,7 @@ import { io } from 'socket.io-client';
 import { useNavigate } from 'react-router-dom';
 import { updatePlayerStats } from '../actions/players';
 import { NavBar } from '../components';
+import { snakeMusic, gameOver } from '../assets/music';
 
 const Game = ({ type, gameCode }) => {
   const navigate = useNavigate();
@@ -10,6 +11,8 @@ const Game = ({ type, gameCode }) => {
   const BG_COLOR = '#231f20';
   const SNAKE_COLOR = '#c2c2c2';
   const FOOD_COLOR = '#e66916';
+  const startAudio = new Audio(snakeMusic);
+  const endAudio = new Audio(gameOver);
 
   document.title = 'Snake Game Lobby';
   let gameCodeDisplay;
@@ -27,6 +30,10 @@ const Game = ({ type, gameCode }) => {
     gameCodeDisplay = document.getElementById('gameCodeDisplay');
     gameScoreDisplay = document.getElementById('gameScoreDisplay');
     gameTimerDisplay = document.getElementById('gameTimerDisplay');
+
+    startAudio.loop = true;
+    startAudio.volume = localStorage.getItem('volume') / 100;
+    startAudio.play();
   }, []);
 
   const handleGameStart = () => {
@@ -58,7 +65,9 @@ const Game = ({ type, gameCode }) => {
   };
 
   const newGame = () => {
+    const keySettings = JSON.parse(localStorage.getItem('keys'));
     socket.emit('newGame');
+    socket.emit('keySettings', keySettings);
     init();
   };
 
@@ -89,6 +98,8 @@ const Game = ({ type, gameCode }) => {
     for (let cell of snake) {
       ctx.fillRect(cell.x * size, cell.y * size, size, size);
     }
+    const firstCell = snake[0];
+    firstCell.fillStyle = 'black';
   };
 
   const handleGameState = (gameState) => {
@@ -122,6 +133,9 @@ const Game = ({ type, gameCode }) => {
     }
 
     data = JSON.parse(data);
+    startAudio.pause();
+    endAudio.play();
+
     if (data.winner === playerNumber) {
       reset();
       alert('You Win!');

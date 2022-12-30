@@ -3,6 +3,7 @@ import { io } from 'socket.io-client';
 import { useNavigate } from 'react-router-dom';
 import { updatePlayerStatsSingle } from '../actions/players';
 import { NavBar } from '../components';
+import { snakeMusic, gameOver } from '../assets/music';
 
 const SingleGame = () => {
   const navigate = useNavigate();
@@ -10,6 +11,8 @@ const SingleGame = () => {
   const BG_COLOR = '#231f20';
   const SNAKE_COLOR = '#c2c2c2';
   const FOOD_COLOR = '#e66916';
+  const startAudio = new Audio(snakeMusic);
+  const endAudio = new Audio(gameOver);
 
   document.title = 'Snake Game Lobby';
   let gameCodeDisplay;
@@ -23,6 +26,10 @@ const SingleGame = () => {
     gameCodeDisplay = document.getElementById('gameCodeDisplay');
     gameScoreDisplay = document.getElementById('gameScoreDisplay');
     gameTimerDisplay = document.getElementById('gameTimerDisplay');
+
+    startAudio.loop = true;
+    startAudio.volume = localStorage.getItem('volume') / 100;
+    startAudio.play();
   }, []);
 
   const handleGameStart = () => {
@@ -54,7 +61,9 @@ const SingleGame = () => {
   };
 
   const newGame = () => {
+    const keySettings = JSON.parse(localStorage.getItem('keys'));
     socket.emit('newSingleGame');
+    socket.emit('keySettings', keySettings);
     init();
   };
 
@@ -79,6 +88,21 @@ const SingleGame = () => {
     for (let cell of snake) {
       ctx.fillRect(cell.x * size, cell.y * size, size, size);
     }
+    ctx.fillStyle = '#228B22';
+    ctx.fillRect(snake[snake.length - 1].x * size, snake[snake.length - 1].y * size, size, size);
+
+    ctx.fillStyle = '#000';
+    ctx.fillRect(snake[snake.length - 1].x * size + 2, snake[snake.length - 1].y * size + 2, 2, 2);
+    ctx.fillRect(snake[snake.length - 1].x * size + 6, snake[snake.length - 1].y * size + 2, 2, 2);
+
+    //make a red mouth on the snake head
+    ctx.fillStyle = '#FF0000';
+    ctx.fillRect(
+      snake[snake.length - 1].x * size + 10,
+      snake[snake.length - 1].y * size + 10,
+      10,
+      2
+    );
   };
 
   const handleGameState = (gameState) => {
@@ -108,6 +132,9 @@ const SingleGame = () => {
     }
 
     data = JSON.parse(data);
+    startAudio.pause();
+    endAudio.play();
+
     if (data.winner == 2) {
       reset();
       alert('You lost');

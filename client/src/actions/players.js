@@ -50,3 +50,36 @@ export const getPlayers = async () => {
     console.log(error);
   }
 };
+
+export const changeEmail = async (email) => {
+  try {
+    const id = JSON.parse(localStorage.getItem('profile')).result._id;
+
+    const { data } = await api.changeEmail(id, email);
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const changeUsername = async (username) => {
+  try {
+    const id = JSON.parse(localStorage.getItem('profile')).result._id;
+
+    const { data } = await api.changeUsername(id, username);
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const changePassword = async (password) => {
+  try {
+    const id = JSON.parse(localStorage.getItem('profile')).result._id;
+
+    const { data } = await api.changePassword(id, password);
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};

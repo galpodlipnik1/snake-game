@@ -133,24 +133,6 @@ export const updatePlayerStats= async (req, res) => {
     }
 };
 
-export const deletePlayer = async (req, res) => {
-    const { id } = req.params;
-
-    try {
-        if(!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No player with id: ${id}`);
-
-        await PlayerModal.findByIdAndRemove(id);
-
-        console.log(chalk.green(`[${dateAndTime}] Player deleted(${id})`));
-        res.json({ message: "Player deleted successfully." });
-    } catch (error) {
-        console.log(chalk.red(`[${dateAndTime}] ${error.message}`));
-
-        res.status(404).json({ message: error.message });
-    }
-
-};
-
 export const loginPlayer = async (req, res) => {
     const { username, password } = req.body;
 
@@ -174,3 +156,60 @@ export const loginPlayer = async (req, res) => {
         res.status(404).json({ message: error.message });
     }
 };
+
+export const changeUsername = async (req, res) => {
+    const { id } = req.params;
+    const { username } = req.body;
+
+    try {
+        if(!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No player with id: ${id}`);
+
+        const updatedPlayer = await PlayerModal.findByIdAndUpdate(id, { username }, { new: true });
+
+        console.log(chalk.green(`[${dateAndTime}] Player username changed(${updatedPlayer.username})`));
+        res.json(updatedPlayer);
+    } catch (error) {
+        console.log(chalk.red(`[${dateAndTime}] ${error.message}`));
+
+        res.status(404).json({ message: error.message });
+    }
+};
+
+export const changePassword = async (req, res) => {
+    const { id } = req.params;
+    const { password } = req.body;
+
+    try {
+        if(!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No player with id: ${id}`);
+
+        const hashedPassword = await bcrypt.hash(password, 12);
+
+        const updatedPlayer = await PlayerModal.findByIdAndUpdate (id, { password: hashedPassword }, { new: true });
+
+        console.log(chalk.green(`[${dateAndTime}] Player password changed(${updatedPlayer.username})`));
+        res.json(updatedPlayer);
+    } catch (error) {
+        console.log(chalk.red(`[${dateAndTime}] ${error.message}`));
+
+        res.status(404).json({ message: error.message });
+    }
+};
+
+export const changeEmail = async (req, res) => {
+    const { id } = req.params;
+    const { email } = req.body;
+
+    try {
+        if(!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No player with id: ${id}`);
+
+        const updatedPlayer = await PlayerModal.findByIdAndUpdate(id, { email }, { new: true });
+
+        console.log(chalk.green(`[${dateAndTime}] Player email changed(${updatedPlayer.username})`));
+        res.json(updatedPlayer);
+    } catch (error) {
+        console.log(chalk.red(`[${dateAndTime}] ${error.message}`));
+
+        res.status(404).json({ message: error.message });
+    }
+};
+

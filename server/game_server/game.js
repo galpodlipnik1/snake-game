@@ -233,18 +233,33 @@ const SinglerandomFood = (state) => {
   state.food = food;
 }
 
-export const getUpdatedVelocity = (keyCode) => {
+export const getUpdatedVelocity = (keyCode, keySettings, state, playerIndex) => {
+  console.log(playerIndex);
+  const playerOne = state.players[playerIndex];
+  console.log(keyCode, keySettings);
   switch (keyCode) {
-    case 37: { // left
+    case parseInt(keySettings.left): { // left
+      if (playerOne.vel.x === 1) {
+        return;
+      }
       return { x: -1, y: 0 };
     }
-    case 38: { // down
+    case parseInt(keySettings.up): { // up
+      if (playerOne.vel.y === 1) {
+        return;
+      }
       return { x: 0, y: -1 };
     }
-    case 39: { // right
+    case parseInt(keySettings.right): { // right
+      if (playerOne.vel.x === -1) {
+        return;
+      }
       return { x: 1, y: 0 };
     }
-    case 40: { // up
+    case parseInt(keySettings.down): { // down
+      if (playerOne.vel.y === -1) {
+        return;
+      }
       return { x: 0, y: 1 };
     }
   }

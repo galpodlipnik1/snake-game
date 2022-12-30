@@ -11,6 +11,18 @@ export const ContextProvider = ({ children }) => {
       setUser(JSON.parse(localStorage.getItem('profile')));
       setIsLogged(true);
     }
+    if (!localStorage.getItem('keys')) {
+      const keys = {
+        up: 38,
+        down: 40,
+        left: 37,
+        right: 39
+      };
+      localStorage.setItem('keys', JSON.stringify(keys));
+    }
+    if (!localStorage.getItem('volume')) {
+      localStorage.setItem('volume', 100);
+    }
   }, []);
 
   return (
