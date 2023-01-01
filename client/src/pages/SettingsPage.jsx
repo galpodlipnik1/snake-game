@@ -144,14 +144,6 @@ const SettingsPage = () => {
             Change
           </button>
         </form>
-
-        <form className="flex flex-col justify-center items-center border-2 border-black rounded-lg bg-green-400 p-3 ">
-          <h2 className="underline uppercase">Change Profile Picture</h2>
-          <input type="file" className="border-2 border-black rounded-lg mt-2 p-1" />
-          <button className="bg-white border-2 border-black rounded-lg p-1 mt-2 active:translate-y-2 duration-200">
-            Change
-          </button>
-        </form>
       </div>
       <div className="flex flex-row justify-around items-center mt-10 w-full">
         <div className="flex flex-row justify-around items-center mt-10 w-6/12">
