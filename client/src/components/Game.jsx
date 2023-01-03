@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 import { useNavigate } from 'react-router-dom';
 import { updatePlayerStats } from '../actions/players';
@@ -7,6 +7,7 @@ import { snakeMusic, gameOver } from '../assets/music';
 
 const Game = ({ type, gameCode }) => {
   const navigate = useNavigate();
+  const [user] = useState(JSON.parse(localStorage.getItem('profile')));
   const socket = io('http://localhost:3000');
   const BG_COLOR = '#231f20';
   const SNAKE_COLOR = '#c2c2c2';
@@ -93,13 +94,32 @@ const Game = ({ type, gameCode }) => {
 
   const paintPlayer = (playerState, size, color) => {
     const snake = playerState.snake;
+    ctx.font = '12px Arial';
+    ctx.fillStyle = '#fff';
+    ctx.fillText(
+      user.result.username ? user.result.username : 'Player',
+      snake[0].x * size + 35,
+      snake[0].y * size - 10
+    );
 
     ctx.fillStyle = color;
     for (let cell of snake) {
       ctx.fillRect(cell.x * size, cell.y * size, size, size);
     }
-    const firstCell = snake[0];
-    firstCell.fillStyle = 'black';
+    ctx.fillStyle = '#228B22';
+    ctx.fillRect(snake[snake.length - 1].x * size, snake[snake.length - 1].y * size, size, size);
+
+    ctx.fillStyle = '#000';
+    ctx.fillRect(snake[snake.length - 1].x * size + 2, snake[snake.length - 1].y * size + 2, 2, 2);
+    ctx.fillRect(snake[snake.length - 1].x * size + 6, snake[snake.length - 1].y * size + 2, 2, 2);
+
+    ctx.fillStyle = '#FF0000';
+    ctx.fillRect(
+      snake[snake.length - 1].x * size + 10,
+      snake[snake.length - 1].y * size + 10,
+      10,
+      2
+    );
   };
 
   const handleGameState = (gameState) => {

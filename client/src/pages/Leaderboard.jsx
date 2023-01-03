@@ -56,7 +56,10 @@ function Leaderboard() {
                     </div>
                     <div className="flex flex-col items-center justify-center">
                       <span>WIN RATE:</span>
-                      <h1 className="text-xl font-bold"> {player.stats.winRate}%</h1>
+                      <h1 className="text-xl font-bold">
+                        {' '}
+                        {Number(player.stats.winRate).toFixed(2)}%
+                      </h1>
                     </div>
                   </div>
                 </div>
@@ -82,7 +85,9 @@ function Leaderboard() {
                     </div>
                     <div className="flex flex-col items-center justify-center mr-2 pr-2 border-r-2 border-r-black">
                       <span>AVG. SCORE:</span>
-                      <h1 className="text-xl font-bold">{player.singleStats.avgScore}</h1>
+                      <h1 className="text-xl font-bold">
+                        {Number(player.singleStats.avgScore).toFixed(2)}
+                      </h1>
                     </div>
                     <div className="flex flex-col items-center justify-center">
                       <span>NUM OF GAMES:</span>
