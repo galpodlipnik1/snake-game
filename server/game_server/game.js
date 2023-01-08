@@ -130,6 +130,20 @@ export const gameLoop = (state) => {
   playerTwo.pos.x += playerTwo.vel.x;
   playerTwo.pos.y += playerTwo.vel.y;
 
+  for (let cell of playerOne.snake) {
+    if (cell.x === playerTwo.pos.x && cell.y === playerTwo.pos.y) {
+      console.log('player 2 hit player 1');
+      return 1;
+    }
+  }
+
+  for (let cell of playerTwo.snake) {
+    if (cell.x === playerOne.pos.x && cell.y === playerOne.pos.y) {
+      console.log('player 1 hit player 2');
+      return 2;
+    }
+  }
+
   if (playerOne.pos.x < 0 || playerOne.pos.x > GRID_SIZE || playerOne.pos.y < 0 || playerOne.pos.y > GRID_SIZE) {
     console.log('Player 1 hit the wall');
     return 2;

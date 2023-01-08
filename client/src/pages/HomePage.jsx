@@ -65,10 +65,10 @@ const HomePage = () => {
               was a resurgence of interest in snake games as it found a larger audience.
             </p>
           </div>
-          <div className="flex flex-col w-2/12 bg-white rounded-2xl mt-10">
+          <div className="flex flex-col w-3/12 bg-white rounded-2xl mt-10">
             <button
               type="button"
-              className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-10 mx-5 hover:translate-y-3 transition duration-500 ease-in-out"
+              className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-5 mx-5 hover:translate-y-3 transition duration-500 ease-in-out"
               onClick={() => {
                 handleSinglePlayer();
               }}
@@ -77,7 +77,7 @@ const HomePage = () => {
             </button>
             <button
               type="button"
-              className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-10 mx-5 hover:translate-y-3 transition duration-500 ease-in-out"
+              className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-5 mx-5 hover:translate-y-3 transition duration-500 ease-in-out"
               onClick={() => {
                 handleInstaPlay();
               }}
@@ -86,7 +86,7 @@ const HomePage = () => {
             </button>
             <button
               type="button"
-              className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-10 mx-5 hover:translate-y-3 transition duration-500 ease-in-out"
+              className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-5 mx-5 hover:translate-y-3 transition duration-500 ease-in-out"
               onClick={() => {
                 handleLobby();
               }}
@@ -95,7 +95,7 @@ const HomePage = () => {
             </button>
             <button
               type="button"
-              className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-10 mx-5 hover:translate-y-3 transition duration-500 ease-in-out"
+              className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-5 mx-5 hover:translate-y-3 transition duration-500 ease-in-out"
               onClick={() => {
                 handleLeaderboard();
               }}
@@ -104,7 +104,7 @@ const HomePage = () => {
             </button>
             <button
               type="button"
-              className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-10 mx-5 hover:translate-y-3 transition duration-500 ease-in-out mb-5"
+              className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-5 mx-5 hover:translate-y-3 transition duration-500 ease-in-out mb-5"
               onClick={() => {
                 handleSettings();
               }}

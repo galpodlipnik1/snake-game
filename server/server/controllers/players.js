@@ -115,7 +115,7 @@ export const updatePlayerStats= async (req, res) => {
                 numOfGames: Number(player.stats.numOfGames + 1),
                 numOfWins: Number(player.stats.numOfWins + winner),
                 numOfLosses: Number(player.stats.numOfLosses + winner == 0 ? 1 : 0),
-                winRate: Number((player.stats.numOfWins + winner) / (player.stats.numOfGames + 1)),
+                winRate: Number(((player.stats.numOfWins + winner) / (player.stats.numOfGames + 1)) * 100),
                 combinedScore: Number(player.stats.combinedScore + score),
                 combinedTime: Number(player.stats.combinedTime + timer),
                 avgScore: Number((player.stats.combinedScore + score) / (player.stats.numOfGames + 1)),
