@@ -94,13 +94,6 @@ const Game = ({ type, gameCode }) => {
 
   const paintPlayer = (playerState, size, color) => {
     const snake = playerState.snake;
-    ctx.font = '12px Arial';
-    ctx.fillStyle = '#fff';
-    ctx.fillText(
-      user.result.username ? user.result.username : 'Player',
-      snake[0].x * size + 35,
-      snake[0].y * size - 10
-    );
 
     ctx.fillStyle = color;
     for (let cell of snake) {
